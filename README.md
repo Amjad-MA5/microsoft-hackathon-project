@@ -1,8 +1,8 @@
-# LLM Schedule Optimizer
+# Planify
 
 ## Project Overview
 
-The LLM Schedule Optimizer is a web-based proof of concept developed for a three-hour hackathon. It uses a large language model (LLM) to transform team availability, employee skills, task requirements, and operational constraints into an optimized project schedule.
+Planify is a web-based proof of concept developed for a three-hour hackathon. It uses a large language model (LLM) to transform team availability, employee skills, task requirements, and operational constraints into an optimized project schedule.
 
 The system combines the contextual reasoning capabilities of an LLM with deterministic scheduling rules. This approach allows the application to account for human context while maintaining predictable and enforceable scheduling behavior.
 

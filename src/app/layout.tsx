@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Schedule Optimizer",
+  title: "Planify",
   description: "AI-assisted task breakdown and team scheduling.",
 };
 
