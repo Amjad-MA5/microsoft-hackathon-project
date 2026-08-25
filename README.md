@@ -73,6 +73,133 @@ The JSON response includes a rationale for each employee's assignments. The inte
 
 > Mark's tasks were grouped on Tuesday to reduce the number of required commutes.
 
+## Detailed Schedule Output
+
+The optimizer must return an actionable project plan rather than only a high-level summary. The output should contain the following information.
+
+### Project-Level Information
+
+- Project name, objective, and description.
+- Planned start date and projected end date.
+- Overall duration and current schedule status.
+- Project milestones, milestone dates, and completion criteria.
+- Key assumptions and constraints used during scheduling.
+- Overall risks, blockers, and recommended actions.
+
+### Task-Level Information
+
+Each task should be represented as an individual schedule item containing:
+
+- Unique task ID and task title.
+- Task description and deliverable.
+- Assigned person or people.
+- Required skills and the skills used by the assignee.
+- Start date and end date.
+- Start time and end time for each scheduled work period.
+- Total estimated effort and scheduled hours.
+- Task status, priority, and milestone association.
+- Dependencies and predecessor task IDs.
+- Whether the task is on the critical path.
+- Scheduling rationale and any unresolved issue.
+
+### Resource and Management Information
+
+The response should also provide project-management information that supports monitoring and decision-making:
+
+- Workload totals and utilization percentages for each person.
+- Daily and weekly capacity compared with scheduled work.
+- Unassigned, partially scheduled, or over-capacity tasks.
+- Dependency conflicts and tasks that may delay the project.
+- Critical-path tasks and available schedule buffer.
+- Milestone readiness and upcoming deadlines.
+- Risks with severity, probability, impact, owner, and mitigation plan.
+- Assumptions requiring confirmation from the project manager.
+- Recommended decisions, approvals, or follow-up actions.
+- A change summary explaining what was adjusted because of the daily context input.
+
+### Example Detailed Output
+
+The following example illustrates the expected structure. The actual response may contain additional fields as the application evolves.
+
+```json
+{
+  "project": {
+    "name": "Internal Inventory Management Application",
+    "objective": "Deliver an MVP for internal inventory management",
+    "startDate": "2026-09-01",
+    "endDate": "2026-10-09",
+    "durationWeeks": 6,
+    "status": "at-risk",
+    "assumptions": [
+      "Assigned employees are available during the submitted availability windows.",
+      "Task estimates are expressed in working hours."
+    ]
+  },
+  "milestones": [
+    {
+      "id": "m1",
+      "name": "Architecture approved",
+      "date": "2026-09-04",
+      "completionCriteria": ["Architecture decision record approved"]
+    },
+    {
+      "id": "m2",
+      "name": "MVP demonstration",
+      "date": "2026-10-09",
+      "completionCriteria": ["Core inventory workflows pass acceptance testing"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Gather requirements",
+      "description": "Document the inventory workflows and acceptance criteria.",
+      "assignees": ["Sarah"],
+      "requiredSkills": ["Product analysis"],
+      "startDate": "2026-09-01",
+      "endDate": "2026-09-02",
+      "workPeriods": [
+        { "date": "2026-09-01", "startTime": "09:00", "endTime": "13:00" },
+        { "date": "2026-09-02", "startTime": "09:00", "endTime": "11:00" }
+      ],
+      "estimatedHours": 6,
+      "scheduledHours": 6,
+      "status": "scheduled",
+      "priority": "high",
+      "dependencies": [],
+      "criticalPath": true,
+      "rationale": "Assigned to Sarah because she has the required product analysis skill and availability in both work periods."
+    }
+  ],
+  "resources": [
+    {
+      "person": "Sarah",
+      "scheduledHours": 24,
+      "availableHours": 32,
+      "utilizationPercent": 75,
+      "overCapacity": false
+    }
+  ],
+  "risks": [
+    {
+      "description": "The API implementation has limited schedule buffer.",
+      "severity": "medium",
+      "probability": "possible",
+      "impact": "May delay integration testing.",
+      "owner": "Ahmed",
+      "mitigation": "Review the API contract before implementation begins."
+    }
+  ],
+  "unresolvedItems": [],
+  "recommendations": [
+    "Confirm milestone acceptance criteria with the project sponsor."
+  ],
+  "contextChanges": [
+    "No on-site work was assigned to Anna on 2026-09-03 because of the submitted availability exception."
+  ]
+}
+```
+
 ## Example Use Case
 
 Consider an organization with 20 employees. The system maintains information about each employee's role, skills, seniority, current projects, working hours, planned leave, and calendar availability.
@@ -81,19 +208,7 @@ A manager provides a high-level project request:
 
 > Build an internal inventory management web application. We want an MVP in six weeks.
 
-The system can then produce a planning summary that includes:
-
-- Project team: Sarah, Ahmed, Julia, Mark, and Elena.
-- Project duration: six weeks.
-- Twenty-four tasks.
-- Four milestones.
-- A weekly project meeting every Tuesday at 10:00.
-- An architecture meeting during Week 1.
-- Demonstrations at Milestones 2 and 4.
-- Individual task assignments.
-- Task dependencies.
-- Expected workload for each employee.
-- Risk warnings.
+The system should then produce a detailed plan that includes the project dates, individual task assignments, scheduled work periods, dependencies, milestones, resource utilization, critical-path analysis, risks, assumptions, unresolved items, and recommended actions. A project manager should be able to use the output to understand what must be done, who is responsible, when the work will occur, and what could affect delivery.
 
 ## Architectural Principle
 
