@@ -23,6 +23,24 @@ export interface OrganizationData {
   employees: Employee[];
 }
 
+type AvailabilityPattern = Partial<Record<number, Array<readonly [string, string]>>>;
+
+const sixWeekAvailability = (pattern: AvailabilityPattern): TimeSlot[] => {
+  const slots: TimeSlot[] = [];
+  const date = new Date("2026-08-24T00:00:00Z");
+  const endDate = new Date("2026-10-02T00:00:00Z");
+  while (date <= endDate) {
+    const dateText = date.toISOString().slice(0, 10);
+    for (const [start, end] of pattern[date.getUTCDay()] ?? []) {
+      slots.push({ start: `${dateText}T${start}:00Z`, end: `${dateText}T${end}:00Z` });
+    }
+    date.setUTCDate(date.getUTCDate() + 1);
+  }
+  return slots;
+};
+
+const weekday = (slots: Array<readonly [string, string]>): AvailabilityPattern => ({ 1: slots, 2: slots, 3: slots, 4: slots, 5: slots });
+
 export const dummyData: OrganizationData = {
   employees: [
     // 1. The Bottleneck: Very Senior, very busy.
@@ -36,11 +54,7 @@ export const dummyData: OrganizationData = {
         { name: "Legacy Migration", commitmentHoursPerWeek: 25 }
       ],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T10:00:00Z", end: "2026-08-24T15:00:00Z" },
-        { start: "2026-08-26T10:00:00Z", end: "2026-08-26T15:00:00Z" },
-        { start: "2026-08-28T10:00:00Z", end: "2026-08-28T15:00:00Z" }
-      ]
+      availability: sixWeekAvailability({ 1: [["10:00", "15:00"]], 3: [["10:00", "15:00"]], 5: [["10:00", "15:00"]] })
     },
     // 2. The Vacationer: Critical Backend dev, but missing the first half of the week (Edge Case).
     {
@@ -53,10 +67,7 @@ export const dummyData: OrganizationData = {
       plannedLeave: [
         { start: "2026-08-24T00:00:00Z", end: "2026-08-26T23:59:59Z" } // Vacation Mon-Wed
       ],
-      availability: [
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" },
-        { start: "2026-08-28T09:00:00Z", end: "2026-08-28T17:00:00Z" }
-      ]
+      availability: sixWeekAvailability(weekday([["09:00", "12:30"], ["13:30", "17:00"]]))
     },
     // 3. The Part-Timer: Only works mornings.
     {
@@ -69,13 +80,7 @@ export const dummyData: OrganizationData = {
         { name: "Design System V2", commitmentHoursPerWeek: 5 }
       ],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T08:00:00Z", end: "2026-08-24T12:00:00Z" },
-        { start: "2026-08-25T08:00:00Z", end: "2026-08-25T12:00:00Z" },
-        { start: "2026-08-26T08:00:00Z", end: "2026-08-26T12:00:00Z" },
-        { start: "2026-08-27T08:00:00Z", end: "2026-08-27T12:00:00Z" },
-        { start: "2026-08-28T08:00:00Z", end: "2026-08-28T12:00:00Z" }
-      ]
+      availability: sixWeekAvailability(weekday([["08:00", "12:00"]]))
     },
     // 4. The Workhorse: Solid Mid-level Dev, fully available.
     {
@@ -86,13 +91,7 @@ export const dummyData: OrganizationData = {
       skills: ["React", "Next.js", "Tailwind CSS"],
       currentProjects: [],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T09:00:00Z", end: "2026-08-24T17:00:00Z" },
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" },
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" },
-        { start: "2026-08-28T09:00:00Z", end: "2026-08-28T17:00:00Z" }
-      ]
+      availability: sixWeekAvailability(weekday([["09:00", "12:00"], ["13:00", "17:00"]]))
     },
     // 5. The Flexible Junior: Available but limited skills.
     {
@@ -103,13 +102,7 @@ export const dummyData: OrganizationData = {
       skills: ["React", "Node.js"],
       currentProjects: [],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T09:00:00Z", end: "2026-08-24T17:00:00Z" },
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" },
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" },
-        { start: "2026-08-28T09:00:00Z", end: "2026-08-28T17:00:00Z" }
-      ]
+      availability: sixWeekAvailability({ 1: [["09:00", "17:00"]], 2: [["09:00", "17:00"]], 3: [["09:00", "13:00"]], 4: [["09:00", "17:00"]], 5: [["09:00", "17:00"]] })
     },
     // 6. The Specialist: Only DevOps person, but limited availability (Edge Case).
     {
@@ -122,10 +115,7 @@ export const dummyData: OrganizationData = {
         { name: "Infrastructure Audit", commitmentHoursPerWeek: 15 }
       ],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-25T13:00:00Z", end: "2026-08-25T17:00:00Z" }, // Only Tuesday afternoon
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" }  // And all Thursday
-      ]
+      availability: sixWeekAvailability({ 2: [["13:00", "17:00"]], 4: [["09:00", "12:00"], ["13:00", "17:00"]] })
     },
     // 7. Quality Assurance
     {
@@ -138,13 +128,7 @@ export const dummyData: OrganizationData = {
       plannedLeave: [
         { start: "2026-08-28T12:00:00Z", end: "2026-08-28T17:00:00Z" } // Leaves early on Friday
       ],
-      availability: [
-        { start: "2026-08-24T09:00:00Z", end: "2026-08-24T17:00:00Z" },
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" },
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" },
-        { start: "2026-08-28T09:00:00Z", end: "2026-08-28T12:00:00Z" } 
-      ]
+      availability: sixWeekAvailability({ 1: [["09:00", "17:00"]], 2: [["09:00", "17:00"]], 3: [["09:00", "17:00"]], 4: [["09:00", "17:00"]], 5: [["09:00", "12:00"]] })
     },
     // 8. The Manager: Only available for specific meetings.
     {
@@ -157,10 +141,7 @@ export const dummyData: OrganizationData = {
         { name: "Product Roadmap Q4", commitmentHoursPerWeek: 30 }
       ],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T14:00:00Z", end: "2026-08-24T16:00:00Z" }, // Monday afternoon sync
-        { start: "2026-08-26T10:00:00Z", end: "2026-08-26T12:00:00Z" }  // Wednesday morning sync
-      ]
+      availability: sixWeekAvailability({ 1: [["14:00", "16:00"]], 3: [["10:00", "12:00"]] })
     },
     // 9. Another Backend Dev (to balance Mark being away)
     {
@@ -171,13 +152,7 @@ export const dummyData: OrganizationData = {
       skills: ["Java", "Spring Boot", "PostgreSQL"],
       currentProjects: [],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T09:00:00Z", end: "2026-08-24T17:00:00Z" },
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" },
-        { start: "2026-08-27T09:00:00Z", end: "2026-08-27T17:00:00Z" },
-        { start: "2026-08-28T09:00:00Z", end: "2026-08-28T17:00:00Z" }
-      ]
+      availability: sixWeekAvailability(weekday([["09:00", "12:30"], ["13:30", "17:00"]]))
     },
     // 10. Data Specialist
     {
@@ -190,11 +165,7 @@ export const dummyData: OrganizationData = {
         { name: "Customer Churn Prediction", commitmentHoursPerWeek: 10 }
       ],
       plannedLeave: [],
-      availability: [
-        { start: "2026-08-24T09:00:00Z", end: "2026-08-24T17:00:00Z" },
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" } // Only works Mon-Wed
-      ]
+      availability: sixWeekAvailability({ 1: [["09:00", "12:00"], ["13:00", "17:00"]], 2: [["09:00", "12:00"], ["13:00", "17:00"]], 3: [["09:00", "12:00"], ["13:00", "17:00"]] })
     }
   ]
 };
