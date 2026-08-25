@@ -10,8 +10,18 @@ export interface Person {
   availability: TimeSlot[];
 }
 
+export interface Task {
+  id: string;
+  title: string;
+  requiredSkills: string[];
+  durationHours: number; // Wie lange dauert die Aufgabe?
+  deadline?: string;     // (Optional) Bis wann muss sie erledigt sein? (ISO Timestamp)
+  priority: "high" | "medium" | "low"; // Wichtig für den Optimizer, falls nicht genug Zeit für alles ist
+}
+
 export interface SchedulingData {
   persons: Person[];
+  tasks: Task[];
 }
 
 export const dummyData: SchedulingData = {
@@ -46,6 +56,38 @@ export const dummyData: SchedulingData = {
         { start: "2026-08-25T10:00:00Z", end: "2026-08-25T15:00:00Z" },
         { start: "2026-08-26T10:00:00Z", end: "2026-08-26T15:00:00Z" }
       ]
+    }
+  ],
+  tasks: [
+    {
+      id: "t1",
+      title: "Design Homepage Mockups",
+      requiredSkills: ["Design"],
+      durationHours: 3,
+      deadline: "2026-08-25T17:00:00Z",
+      priority: "high"
+    },
+    {
+      id: "t2",
+      title: "Setup Database Schema",
+      requiredSkills: ["Database"],
+      durationHours: 4,
+      priority: "high"
+    },
+    {
+      id: "t3",
+      title: "Implement Login Frontend",
+      requiredSkills: ["Frontend"],
+      durationHours: 2,
+      deadline: "2026-08-26T12:00:00Z",
+      priority: "medium"
+    },
+    {
+      id: "t4",
+      title: "Sprint Planning Meeting",
+      requiredSkills: ["Scrum"],
+      durationHours: 1,
+      priority: "low"
     }
   ]
 };
