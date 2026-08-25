@@ -3,91 +3,84 @@ export interface TimeSlot {
   end: string;   // ISO 8601 Timestamp, e.g. "2026-08-25T12:00:00Z"
 }
 
-export interface Person {
+export interface Project {
+  name: string;
+  commitmentHoursPerWeek: number;
+}
+
+export interface Employee {
   id: string;
   name: string;
+  role: string;
+  seniority: "Junior" | "Mid" | "Senior" | "Lead";
   skills: string[];
-  availability: TimeSlot[];
+  currentProjects: Project[];
+  plannedLeave: TimeSlot[];
+  availability: TimeSlot[]; // Standard Calendar availability
 }
 
-export interface Task {
-  id: string;
-  title: string;
-  requiredSkills: string[];
-  durationHours: number; // Wie lange dauert die Aufgabe?
-  deadline?: string;     // (Optional) Bis wann muss sie erledigt sein? (ISO Timestamp)
-  priority: "high" | "medium" | "low"; // Wichtig für den Optimizer, falls nicht genug Zeit für alles ist
+export interface OrganizationData {
+  employees: Employee[];
 }
 
-export interface SchedulingData {
-  persons: Person[];
-  tasks: Task[];
-}
-
-export const dummyData: SchedulingData = {
-  persons: [
+export const dummyData: OrganizationData = {
+  employees: [
     {
-      id: "p1",
+      id: "e1",
       name: "Alice",
-      skills: ["Frontend", "Design"],
+      role: "Frontend Developer",
+      seniority: "Senior",
+      skills: ["React", "Next.js", "Tailwind CSS", "Design"],
+      currentProjects: [
+        { name: "Website Redesign", commitmentHoursPerWeek: 10 }
+      ],
+      plannedLeave: [],
       availability: [
-        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T12:00:00Z" },
-        { start: "2026-08-25T13:00:00Z", end: "2026-08-25T17:00:00Z" },
-        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T12:00:00Z" },
-        { start: "2026-08-26T13:00:00Z", end: "2026-08-26T17:00:00Z" }
+        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
+        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" }
       ]
     },
     {
-      id: "p2",
+      id: "e2",
       name: "Bob",
-      skills: ["Backend", "Database"],
+      role: "Backend Developer",
+      seniority: "Mid",
+      skills: ["Node.js", "Python", "Database Design", "API"],
+      currentProjects: [],
+      plannedLeave: [
+        { start: "2026-08-26T00:00:00Z", end: "2026-08-26T23:59:59Z" } // Bob hat am 26. Urlaub
+      ],
       availability: [
-        { start: "2026-08-25T08:30:00Z", end: "2026-08-25T12:30:00Z" },
-        { start: "2026-08-25T13:30:00Z", end: "2026-08-25T16:30:00Z" },
-        { start: "2026-08-26T08:30:00Z", end: "2026-08-26T12:30:00Z" },
-        { start: "2026-08-26T13:30:00Z", end: "2026-08-26T16:30:00Z" }
+        { start: "2026-08-25T08:30:00Z", end: "2026-08-25T16:30:00Z" }
       ]
     },
     {
-      id: "p3",
+      id: "e3",
       name: "Charlie",
-      skills: ["Project Management", "Scrum"],
+      role: "Project Manager",
+      seniority: "Lead",
+      skills: ["Scrum", "Agile", "Resource Planning", "Stakeholder Management"],
+      currentProjects: [
+        { name: "Q3 Roadmap Planning", commitmentHoursPerWeek: 20 }
+      ],
+      plannedLeave: [],
       availability: [
-        { start: "2026-08-25T10:00:00Z", end: "2026-08-25T15:00:00Z" },
-        { start: "2026-08-26T10:00:00Z", end: "2026-08-26T15:00:00Z" }
+        { start: "2026-08-25T10:00:00Z", end: "2026-08-25T18:00:00Z" },
+        { start: "2026-08-26T10:00:00Z", end: "2026-08-26T18:00:00Z" }
       ]
-    }
-  ],
-  tasks: [
-    {
-      id: "t1",
-      title: "Design Homepage Mockups",
-      requiredSkills: ["Design"],
-      durationHours: 3,
-      deadline: "2026-08-25T17:00:00Z",
-      priority: "high"
     },
     {
-      id: "t2",
-      title: "Setup Database Schema",
-      requiredSkills: ["Database"],
-      durationHours: 4,
-      priority: "high"
-    },
-    {
-      id: "t3",
-      title: "Implement Login Frontend",
-      requiredSkills: ["Frontend"],
-      durationHours: 2,
-      deadline: "2026-08-26T12:00:00Z",
-      priority: "medium"
-    },
-    {
-      id: "t4",
-      title: "Sprint Planning Meeting",
-      requiredSkills: ["Scrum"],
-      durationHours: 1,
-      priority: "low"
+      id: "e4",
+      name: "Diana",
+      role: "Fullstack Developer",
+      seniority: "Junior",
+      skills: ["React", "Node.js", "Testing"],
+      currentProjects: [],
+      plannedLeave: [],
+      availability: [
+        { start: "2026-08-25T09:00:00Z", end: "2026-08-25T17:00:00Z" },
+        { start: "2026-08-26T09:00:00Z", end: "2026-08-26T17:00:00Z" }
+      ]
     }
   ]
 };
